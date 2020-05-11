@@ -72,7 +72,7 @@ class BigColor implements Color {
   double _b;
 
   BigColor.fromColor(final Color color) : _value = color.value {
-    computeLab();
+    _computeLab();
   }
 
   BigColor.fromRGB0(final int r, g, b, final double opacity)
@@ -81,10 +81,16 @@ class BigColor implements Color {
                 ((g & 0xff) << 8) |
                 ((b & 0xff) << 0)) &
             0xFFFFFFFF {
-    computeLab();
+    _computeLab();
   }
 
-  void computeLab() {
+  BigColor.fromARGB(int a, int r, int g, int b)
+      : _value = (((a & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | ((b & 0xff) << 0)) &
+            0xFFFFFFFF {
+    _computeLab();
+  }
+
+  void _computeLab() {
     final srgb_r = ColorFunctions.rgb2lrgb(red.toDouble());
     final srgb_g = ColorFunctions.rgb2lrgb(green.toDouble());
     final srgb_b = ColorFunctions.rgb2lrgb(blue.toDouble());
@@ -132,32 +138,19 @@ class BigColor implements Color {
   int get value => _value;
 
   @override
-  Color withAlpha(int a) {
-    // TODO: implement withAlpha
-    throw UnimplementedError();
-  }
+  Color withRed(int r) => BigColor.fromARGB(alpha, r, green, blue);
 
   @override
-  Color withBlue(int a) {
-    // TODO: implement withBlue
-    throw UnimplementedError();
-  }
+  Color withGreen(int g) => BigColor.fromARGB(alpha, red, g, blue);
 
   @override
-  Color withGreen(int a) {
-    // TODO: implement withGreen
-    throw UnimplementedError();
-  }
+  Color withBlue(int b) => BigColor.fromARGB(alpha, red, green, b);
+
+  @override
+  Color withAlpha(int a) => BigColor.fromARGB(a, red, green, blue);
 
   @override
   Color withOpacity(double apacity) {
-    // TODO: implement withOpacity
-    throw UnimplementedError();
-  }
-
-  @override
-  Color withRed(int a) {
-    // TODO: implement withRed
-    throw UnimplementedError();
+    return withAlpha((255.0 * opacity).round());
   }
 }

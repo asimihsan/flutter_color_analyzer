@@ -1,3 +1,19 @@
+// ============================================================================
+//  Copyright 2020 Asim Ihsan. All rights reserved.
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License in the LICENSE file and at
+//
+//      https://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+// ============================================================================
+
 library flutter_color_analyzer;
 
 import 'package:flutter_color_analyzer/big_color.dart';
@@ -38,6 +54,12 @@ class ColorAnalyzer {
     ];
   }
 
+  // noticeablyDifferent determines whether two colors are just-noticeably-different (JND)
+  // or not based on [1].
+  //
+  // This is a convenience wrapper around the raw parameters from [1] with some sensible default
+  // values for p and s. If you don't care or haven't read the paper just leave the default
+  // targetSize and confidence parameter values.
   static bool noticeablyDifferent(final BigColor c1, c2,
       {NoticableDifferenceTargetSize targetSize = NoticableDifferenceTargetSize.THIN,
       NoticableDifferenceConfidence confidence = NoticableDifferenceConfidence.DEFAULT}) {
@@ -67,7 +89,17 @@ class ColorAnalyzer {
         break;
     }
 
-    final jnd = noticeableDifferenceThresholds(percentageObservers, size);
+    return noticeablyDifferentInternal(c1, c2, percentageObservers, size);
+  }
+
+  // noticeablyDifferentInternal determines whether two colors are just-noticeably-different (JND)
+  // or not based on [1].
+  //
+  // This gives you raw access to the p and s values from [1]. See noticeableDifferenceThresholds()
+  // doc for more information about parameters, and also read the paper.
+  static bool noticeablyDifferentInternal(
+      final BigColor c1, c2, double percentageObservers, targetSize) {
+    final jnd = noticeableDifferenceThresholds(percentageObservers, targetSize);
     return (((c1.l - c2.l).abs() >= jnd[0]) ||
         ((c1.a - c2.a).abs() >= jnd[1]) ||
         ((c1.b - c2.b).abs() >= jnd[2]));
