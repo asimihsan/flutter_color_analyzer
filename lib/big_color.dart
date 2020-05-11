@@ -26,9 +26,9 @@ import 'package:flutter/material.dart';
 // ColorFunctions adds a namespace around some constants and methods use to e.g. calculate
 // L*a*b* components.
 class ColorFunctions {
-  static double Xn = 0.96422,
-      Yn = 1.0,
-      Zn = 0.82521,
+  static double xN = 0.96422,
+      yN = 1.0,
+      zN = 0.82521,
       t0 = 4.0 / 29.0,
       t1 = 6.0 / 29.0,
       t2 = 3.0 * t1 * t1,
@@ -40,17 +40,17 @@ class ColorFunctions {
   }
 
   // Convert and apply chromatic adaption from sRGB to CIEXYZ D50, x component.
-  static double lrgb_to_xyzd50_x(final double r, g, b) {
+  static double lrgbToXyzd50X(final double r, g, b) {
     return (0.4360747 * r + 0.3850649 * g + 0.1430804 * b);
   }
 
   // Convert and apply chromatic adaption from sRGB to CIEXYZ D50, y component.
-  static double lrgb_to_xyzd50_y(final double r, g, b) {
+  static double lrgbToXyzd50Y(final double r, g, b) {
     return (0.2225045 * r + 0.7168786 * g + 0.0606169 * b);
   }
 
   // Convert and apply chromatic adaption from sRGB to CIEXYZ D50, z component.
-  static double lrgb_to_xyzd50_z(final double r, g, b) {
+  static double lrgbToXyzd50Z(final double r, g, b) {
     return (0.0139322 * r + 0.0971045 * g + 0.7141733 * b);
   }
 
@@ -95,13 +95,13 @@ class BigColor implements Color {
     final srgbG = ColorFunctions.rgb2lrgb(green.toDouble());
     final srgbB = ColorFunctions.rgb2lrgb(blue.toDouble());
 
-    final x = ColorFunctions.lrgb_to_xyzd50_x(srgbR, srgbG, srgbB);
-    final y = ColorFunctions.lrgb_to_xyzd50_y(srgbR, srgbG, srgbB);
-    final z = ColorFunctions.lrgb_to_xyzd50_z(srgbR, srgbG, srgbB);
+    final x = ColorFunctions.lrgbToXyzd50X(srgbR, srgbG, srgbB);
+    final y = ColorFunctions.lrgbToXyzd50Y(srgbR, srgbG, srgbB);
+    final z = ColorFunctions.lrgbToXyzd50Z(srgbR, srgbG, srgbB);
 
-    final fx = ColorFunctions.xyz2lab(x / ColorFunctions.Xn);
-    final fy = ColorFunctions.xyz2lab(y / ColorFunctions.Yn);
-    final fz = ColorFunctions.xyz2lab(z / ColorFunctions.Zn);
+    final fx = ColorFunctions.xyz2lab(x / ColorFunctions.xN);
+    final fy = ColorFunctions.xyz2lab(y / ColorFunctions.yN);
+    final fz = ColorFunctions.xyz2lab(z / ColorFunctions.zN);
 
     _l = 116 * fy - 16;
     _a = 500 * (fx - fy);

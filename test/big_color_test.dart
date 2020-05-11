@@ -43,7 +43,7 @@ void main() {
     final lrgb_b = 0.6038273388553378;
 
     // === When ===
-    final xyz_x = ColorFunctions.lrgb_to_xyzd50_x(lrgb_r, lrgb_g, lrgb_b);
+    final xyz_x = ColorFunctions.lrgbToXyzd50X(lrgb_r, lrgb_g, lrgb_b);
 
     // === Then ===
     expect(xyz_x, moreOrLessEquals(0.4530396509711626));
@@ -56,7 +56,7 @@ void main() {
     final lrgb_b = 0.6038273388553378;
 
     // === When ===
-    final xyz_y = ColorFunctions.lrgb_to_xyzd50_y(lrgb_r, lrgb_g, lrgb_b);
+    final xyz_y = ColorFunctions.lrgbToXyzd50Y(lrgb_r, lrgb_g, lrgb_b);
 
     // === Then ===
     expect(xyz_y, moreOrLessEquals(0.48228463612237665));
@@ -69,7 +69,7 @@ void main() {
     final lrgb_b = 0.6038273388553378;
 
     // === When ===
-    final xyz_z = ColorFunctions.lrgb_to_xyzd50_z(lrgb_r, lrgb_g, lrgb_b);
+    final xyz_z = ColorFunctions.lrgbToXyzd50Z(lrgb_r, lrgb_g, lrgb_b);
 
     // === Then ===
     expect(xyz_z, moreOrLessEquals(0.4850922280636012));

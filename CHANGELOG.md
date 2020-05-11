@@ -1,3 +1,5 @@
-## [0.0.1] - TODO: Add release date.
+## [0.1.0] - 2020-05-10
 
-* TODO: Describe initial release.
+* Initial release.
+* Wrapper around Flutter Color class to calculate L*a*b components.
+* Determine if two colors are noticeably different or not. See code for research paper references.
