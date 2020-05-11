@@ -1,6 +1,6 @@
 name: flutter_color_analyzer
-description: A new Flutter package project.
-version: 0.0.1
+description: Analyze perceptual differences between colors in order to choose optimal color palettes in an accessible way.
+version: 0.1.0
 author: Asim Ihsan
 homepage: https://github.com/asimihsan/flutter_color_analyzer
 

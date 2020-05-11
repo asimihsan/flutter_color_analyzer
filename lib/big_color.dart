@@ -91,13 +91,13 @@ class BigColor implements Color {
   }
 
   void _computeLab() {
-    final srgb_r = ColorFunctions.rgb2lrgb(red.toDouble());
-    final srgb_g = ColorFunctions.rgb2lrgb(green.toDouble());
-    final srgb_b = ColorFunctions.rgb2lrgb(blue.toDouble());
+    final srgbR = ColorFunctions.rgb2lrgb(red.toDouble());
+    final srgbG = ColorFunctions.rgb2lrgb(green.toDouble());
+    final srgbB = ColorFunctions.rgb2lrgb(blue.toDouble());
 
-    final x = ColorFunctions.lrgb_to_xyzd50_x(srgb_r, srgb_g, srgb_b);
-    final y = ColorFunctions.lrgb_to_xyzd50_y(srgb_r, srgb_g, srgb_b);
-    final z = ColorFunctions.lrgb_to_xyzd50_z(srgb_r, srgb_g, srgb_b);
+    final x = ColorFunctions.lrgb_to_xyzd50_x(srgbR, srgbG, srgbB);
+    final y = ColorFunctions.lrgb_to_xyzd50_y(srgbR, srgbG, srgbB);
+    final z = ColorFunctions.lrgb_to_xyzd50_z(srgbR, srgbG, srgbB);
 
     final fx = ColorFunctions.xyz2lab(x / ColorFunctions.Xn);
     final fy = ColorFunctions.xyz2lab(y / ColorFunctions.Yn);
