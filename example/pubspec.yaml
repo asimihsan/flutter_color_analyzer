@@ -1,6 +1,5 @@
-name: flutter_color_analyzer
-description: Analyze perceptual differences between colors in order to choose optimal color palettes in an accessible way.
-version: 0.1.0
+name: example
+version: 1.0.0
 homepage: https://github.com/asimihsan/flutter_color_analyzer
 
 environment:
@@ -15,4 +14,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  pedantic: ^1.9.0
+flutter_color_analyzer:
+  provider:
+    path: ../
+
+flutter:
+  uses-material-design: true
