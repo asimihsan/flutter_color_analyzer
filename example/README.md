@@ -2,7 +2,7 @@
 
 Based on \[1\] determine if two colors are noticeably different or not. By default use a model
 that empirically matches results for 50% of observers noticing a different for color patches with
-a visual angle of 0.1 degrees (around 0.5cm size viewed from 30cm distance).
+a visual angle of 0.1 degrees (around 0.05cm size viewed from 30cm distance).
 
 ```dart
 import 'package:flutter/material.dart';
