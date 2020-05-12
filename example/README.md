@@ -4,7 +4,7 @@ Based on \[1\] determine if two colors are noticeably different or not. By defau
 that empirically matches results for 50% of observers noticing a different for color patches with
 a visual angle of 0.1 degrees (around 0.5cm size viewed from 30cm distance).
 
-```
+```dart
 import 'package:flutter/material.dart';
 import 'package:flutter_color_analyzer/big_color.dart';
 
