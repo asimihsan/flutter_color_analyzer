@@ -30,5 +30,5 @@ void main() {
 
 ## References
 
-1. Stone, Maureen C., Danielle Albers Szafir and Vidya Setlur. “An Engineering Model for Color
-   Difference as a Function of Size.” (2014).
+1. Stone, Maureen C., Danielle Albers Szafir and Vidya Setlur. [“An Engineering Model for Color
+   Difference as a Function of Size.”](http://www.danielleszafir.com/2014CIC_48_Stone_v3.pdf) (2014).
