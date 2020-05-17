@@ -92,4 +92,22 @@ void main() {
     expect(bigColor.a, moreOrLessEquals(-3.398998724348956));
     expect(bigColor.b, moreOrLessEquals(-10.696507207853333));
   });
+
+  test('BigColor exposes L, c, and h channel values.', () {
+    // === Given/When ===
+    // This is #AABBCC
+    final bigColor = BigColor.fromRGB0(170, 187, 204, 0.4);
+
+    // === Then ===
+    expect(bigColor.red, equals(170));
+    expect(bigColor.green, equals(187));
+    expect(bigColor.blue, equals(204));
+    expect(bigColor.opacity, moreOrLessEquals(0.4));
+    expect(bigColor.alpha, equals(102));
+    expect(bigColor.computeLuminance(), equals(bigColor.l));
+
+    expect(bigColor.l, moreOrLessEquals(74.96879980931759));
+    expect(bigColor.c, moreOrLessEquals(11.223567114593477));
+    expect(bigColor.h, moreOrLessEquals(252.37145234745182));
+  });
 }

@@ -16,7 +16,11 @@
 
 library flutter_color_analyzer;
 
+import 'dart:math';
+
 import 'package:flutter_color_analyzer/big_color.dart';
+
+enum ColorDifferenceMethod { CIE76, CIE94 }
 
 enum NoticableDifferenceTargetSize { THIN, MEDIUM, WIDE }
 
@@ -103,5 +107,40 @@ class ColorAnalyzer {
     return (((c1.l - c2.l).abs() >= jnd[0]) ||
         ((c1.a - c2.a).abs() >= jnd[1]) ||
         ((c1.b - c2.b).abs() >= jnd[2]));
+  }
+
+  static double deltaE(
+      final BigColor bc1, final BigColor bc2, final ColorDifferenceMethod colorDifferenceMethod) {
+    switch (colorDifferenceMethod) {
+      case ColorDifferenceMethod.CIE76:
+        return _deltaE_CIE76(bc1, bc2);
+      case ColorDifferenceMethod.CIE94:
+        return _deltaE_CIE94(bc1, bc2);
+    }
+  }
+
+  static double _deltaE_CIE76(final BigColor bc1, final BigColor bc2) {
+    return sqrt(pow(bc2.l - bc1.l, 2) + pow(bc2.a - bc1.a, 2) + pow(bc2.b - bc1.b, 2));
+  }
+
+  static double _deltaE_CIE94(final BigColor bc1, final BigColor bc2) {
+    final deltaL = bc1.l - bc2.l;
+    final c1 = sqrt(pow(bc1.l, 2) + pow(bc1.b, 2));
+    final c2 = sqrt(pow(bc2.l, 2) + pow(bc2.b, 2));
+    final deltaC = c1 - c2;
+    final deltaA = bc1.a - bc2.a;
+    final deltaB = bc1.b - bc2.b;
+    final deltaH = sqrt(pow(deltaA, 2) + pow(deltaB, 2) - pow(deltaC, 2));
+    final kL = 1;
+    final kC = 1;
+    final kH = 1;
+    final k1 = 0.045;
+    final k2 = 0.015;
+    final sL = 1;
+    final sC = 1 + k1 * c1;
+    final sH = 1 + k2 * c1;
+
+    return sqrt(
+        pow((deltaL / (kL * sL)), 2) + pow((deltaC / (kC * sC)), 2) + pow((deltaH / (kH * sH)), 2));
   }
 }

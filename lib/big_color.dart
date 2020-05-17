@@ -32,7 +32,8 @@ class ColorFunctions {
       t0 = 4.0 / 29.0,
       t1 = 6.0 / 29.0,
       t2 = 3.0 * t1 * t1,
-      t3 = t1 * t1 * t1;
+      t3 = t1 * t1 * t1,
+      rad2deg = 180 / pi;
 
   // Convert RGB to linear-light sRGB.
   static double rgb2lrgb(double x) {
@@ -70,9 +71,16 @@ class BigColor implements Color {
   double _l;
   double _a;
   double _b;
+  double _c;
+  double _h;
+
+  // String is in the format "aabbcc" or "ffaabbcc" with a mandatory leading "#".
+  BigColor.fromHexString(final String hexString) : _value = _getValueFromHexString(hexString) {
+    _computeOtherComponents();
+  }
 
   BigColor.fromColor(final Color color) : _value = color.value {
-    _computeLab();
+    _computeOtherComponents();
   }
 
   BigColor.fromRGB0(final int r, g, b, final double opacity)
@@ -81,16 +89,25 @@ class BigColor implements Color {
                 ((g & 0xff) << 8) |
                 ((b & 0xff) << 0)) &
             0xFFFFFFFF {
-    _computeLab();
+    _computeOtherComponents();
   }
 
   BigColor.fromARGB(int a, int r, int g, int b)
       : _value = (((a & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | ((b & 0xff) << 0)) &
             0xFFFFFFFF {
-    _computeLab();
+    _computeOtherComponents();
   }
 
-  void _computeLab() {
+  static int _getValueFromHexString(final String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 7) {
+      buffer.write('ff');
+    }
+    buffer.write(hexString.replaceFirst('#', ''));
+    return int.parse(buffer.toString(), radix: 16);
+  }
+
+  void _computeOtherComponents() {
     final srgbR = ColorFunctions.rgb2lrgb(red.toDouble());
     final srgbG = ColorFunctions.rgb2lrgb(green.toDouble());
     final srgbB = ColorFunctions.rgb2lrgb(blue.toDouble());
@@ -106,13 +123,34 @@ class BigColor implements Color {
     _l = 116 * fy - 16;
     _a = 500 * (fx - fy);
     _b = 200 * (fy - fz);
+    _c = sqrt(_a * _a + _b * _b);
+
+    final h = atan2(_b, _a) * ColorFunctions.rad2deg;
+    _h = h < 0 ? h + 360 : h;
   }
 
+  // The 'l' (luminance) component of CIELAB. In the range [0, +100].
   double get l => _l;
 
+  // The 'a' component of CIELAB. In the range [-160, +160].
   double get a => _a;
 
+  // The 'b' component of CIELAB. In the range [-160, +160].
   double get b => _b;
+
+  // The 'c' component of CIELCH. In the range [0, +230].
+  double get c => _c;
+
+  // The 'h' (hue) component of Lch. Expressed in degrees in range [0, +360].
+  double get h => _h;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BigColor && runtimeType == other.runtimeType && _value == other._value;
+
+  @override
+  int get hashCode => _value.hashCode;
 
   // Below are overridden methods of the Flutter Color class.
 
