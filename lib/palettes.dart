@@ -17,6 +17,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_color_analyzer/big_color.dart';
 
+class WeightNotFoundException implements Exception {
+  String errMsg() => 'Could not find colors for weights specified';
+}
+
 // References
 //
 // [1] http://vis.stanford.edu/color-names/analyzer/
@@ -70,11 +74,19 @@ class Palettes {
     final result = [];
     for (final weight in weights) {
       for (final mc in _baseMaterialColors) {
-        result.add(BigColor.fromColor(mc[weight]));
+        final color = mc[weight];
+        if (color == null) {
+          throw WeightNotFoundException();
+        }
+        result.add(BigColor.fromColor(color));
       }
     }
-    for (final int weight in weights) {
-      result.add(BigColor.fromColor(Colors.grey[weight]));
+    for (final weight in weights) {
+      final color = Colors.grey[weight];
+      if (color == null) {
+        throw WeightNotFoundException();
+      }
+      result.add(BigColor.fromColor(color));
     }
     result.add(BigColor.fromColor(Colors.black));
     return List.unmodifiable(result);

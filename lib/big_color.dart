@@ -37,7 +37,7 @@ class ColorFunctions {
 
   // Convert RGB to linear-light sRGB.
   static double rgb2lrgb(double x) {
-    return (x /= 255) <= 0.04045 ? x / 12.92 : pow((x + 0.055) / 1.055, 2.4);
+    return (x /= 255) <= 0.04045 ? x / 12.92 : pow((x + 0.055) / 1.055, 2.4).toDouble();
   }
 
   // Convert and apply chromatic adaption from sRGB to CIEXYZ D50, x component.
@@ -57,8 +57,55 @@ class ColorFunctions {
 
   // f-function before converting to LAB.
   static double xyz2lab(final double t) {
-    return t > t3 ? pow(t, 1.0 / 3.0) : t / t2 + t0;
+    return t > t3 ? pow(t, 1.0 / 3.0).toDouble() : t / t2 + t0;
   }
+}
+
+class _LabchValues {
+  final double l;
+  final double a;
+  final double b;
+  final double c;
+  final double h;
+
+  _LabchValues(this.l, this.a, this.b, this.c, this.h);
+}
+
+_LabchValues _getLabchValues(int value) {
+  final red = (0x00ff0000 & value) >> 16;
+  final green = (0x0000ff00 & value) >> 8;
+  final blue = (0x000000ff & value) >> 0;
+
+  final srgbR = ColorFunctions.rgb2lrgb(red.toDouble());
+  final srgbG = ColorFunctions.rgb2lrgb(green.toDouble());
+  final srgbB = ColorFunctions.rgb2lrgb(blue.toDouble());
+
+  final x = ColorFunctions.lrgbToXyzd50X(srgbR, srgbG, srgbB);
+  final y = ColorFunctions.lrgbToXyzd50Y(srgbR, srgbG, srgbB);
+  final z = ColorFunctions.lrgbToXyzd50Z(srgbR, srgbG, srgbB);
+
+  final fx = ColorFunctions.xyz2lab(x / ColorFunctions.xN);
+  final fy = ColorFunctions.xyz2lab(y / ColorFunctions.yN);
+  final fz = ColorFunctions.xyz2lab(z / ColorFunctions.zN);
+
+  final l = 116 * fy - 16;
+  final a = 500 * (fx - fy);
+  final b = 200 * (fy - fz);
+  final c = sqrt(a * a + b * b);
+
+  var h = atan2(b, a) * ColorFunctions.rad2deg;
+  h = h < 0 ? h + 360 : h;
+
+  return _LabchValues(l, a, b, c, h);
+}
+
+int _getValueFromHexString(final String hexString) {
+  final buffer = StringBuffer();
+  if (hexString.length == 7) {
+    buffer.write('ff');
+  }
+  buffer.write(hexString.replaceFirst('#', ''));
+  return int.parse(buffer.toString(), radix: 16);
 }
 
 // BigColor adds e.g. getters for L*a*b* components to the basic Flutter Color class.
@@ -68,66 +115,46 @@ class ColorFunctions {
 class BigColor implements Color {
   final int _value;
 
-  double _l;
-  double _a;
-  double _b;
-  double _c;
-  double _h;
+  final double _l;
+  final double _a;
+  final double _b;
+  final double _c;
+  final double _h;
 
   // String is in the format "aabbcc" or "ffaabbcc" with a mandatory leading "#".
-  BigColor.fromHexString(final String hexString) : _value = _getValueFromHexString(hexString) {
-    _computeOtherComponents();
+  factory BigColor.fromHexString(final String hexString) {
+    final value = _getValueFromHexString(hexString);
+    return BigColor._fromValue(value);
   }
 
-  BigColor.fromColor(final Color color) : _value = color.value {
-    _computeOtherComponents();
+  factory BigColor.fromColor(final Color color) {
+    final value = color.value;
+    return BigColor._fromValue(value);
   }
 
-  BigColor.fromRGB0(final int r, g, b, final double opacity)
-      : _value = ((((opacity * 0xff ~/ 1) & 0xff) << 24) |
-                ((r & 0xff) << 16) |
-                ((g & 0xff) << 8) |
-                ((b & 0xff) << 0)) &
-            0xFFFFFFFF {
-    _computeOtherComponents();
+  factory BigColor.fromRGB0(final int r, g, b, final double opacity) {
+    final value = ((((opacity * 0xff ~/ 1) & 0xff) << 24) |
+            ((r & 0xff) << 16) |
+            ((g & 0xff) << 8) |
+            ((b & 0xff) << 0)) &
+        0xFFFFFFFF;
+    return BigColor._fromValue(value);
   }
 
-  BigColor.fromARGB(int a, int r, int g, int b)
-      : _value = (((a & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | ((b & 0xff) << 0)) &
-            0xFFFFFFFF {
-    _computeOtherComponents();
+  factory BigColor.fromARGB(int a, int r, int g, int b) {
+    final value =
+        (((a & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | ((b & 0xff) << 0)) &
+            0xFFFFFFFF;
+    return BigColor._fromValue(value);
   }
 
-  static int _getValueFromHexString(final String hexString) {
-    final buffer = StringBuffer();
-    if (hexString.length == 7) {
-      buffer.write('ff');
-    }
-    buffer.write(hexString.replaceFirst('#', ''));
-    return int.parse(buffer.toString(), radix: 16);
+  factory BigColor._fromValue(final int value) {
+    final labchValues = _getLabchValues(value);
+    return BigColor._internal(
+        value, labchValues.l, labchValues.a, labchValues.b, labchValues.c, labchValues.h);
   }
 
-  void _computeOtherComponents() {
-    final srgbR = ColorFunctions.rgb2lrgb(red.toDouble());
-    final srgbG = ColorFunctions.rgb2lrgb(green.toDouble());
-    final srgbB = ColorFunctions.rgb2lrgb(blue.toDouble());
-
-    final x = ColorFunctions.lrgbToXyzd50X(srgbR, srgbG, srgbB);
-    final y = ColorFunctions.lrgbToXyzd50Y(srgbR, srgbG, srgbB);
-    final z = ColorFunctions.lrgbToXyzd50Z(srgbR, srgbG, srgbB);
-
-    final fx = ColorFunctions.xyz2lab(x / ColorFunctions.xN);
-    final fy = ColorFunctions.xyz2lab(y / ColorFunctions.yN);
-    final fz = ColorFunctions.xyz2lab(z / ColorFunctions.zN);
-
-    _l = 116 * fy - 16;
-    _a = 500 * (fx - fy);
-    _b = 200 * (fy - fz);
-    _c = sqrt(_a * _a + _b * _b);
-
-    final h = atan2(_b, _a) * ColorFunctions.rad2deg;
-    _h = h < 0 ? h + 360 : h;
-  }
+  BigColor._internal(this._value, this._l, this._a, this._b, this._c, this._h);
 
   // The 'l' (luminance) component of CIELAB. In the range [0, +100].
   double get l => _l;
