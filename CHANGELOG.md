@@ -1,3 +1,8 @@
+## [0.1.1] - 2021-06-19
+
+* Support null safety.
+
+
 ## [0.1.0] - 2020-05-10
 
 * Initial release.
