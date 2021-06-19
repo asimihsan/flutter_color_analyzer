@@ -2,8 +2,10 @@
 
 [![Build Status](https://api.travis-ci.com/asimihsan/flutter_color_analyzer.svg?branch=master)](https://travis-ci.com/github/asimihsan/flutter_color_analyzer/)
 [![codecov](https://codecov.io/gh/asimihsan/flutter_color_analyzer/branch/master/graph/badge.svg)](https://codecov.io/gh/asimihsan/flutter_color_analyzer)
+[![pub points](https://badges.bar/flutter_color_analyzer/pub%20points)](https://pub.dev/packages/flutter_color_analyzer/score)
 
 `flutter_color_analyzer` offers utilities for analyzing perceptual differences between colors in order to choose optimal color palettes in an accessible way.
+
 
 ## Examples
 
